@@ -1,9 +1,10 @@
-var player, playerImg, zombieImg1,zombieImg2, zombieGroup, health,gameState;
+  var player, playerImg, zombieImg1,zombieImg2, zombieGroup, health,gameState,bulletGroup,backgroundImg,wave;
 
 function preload(){
 playerImg= loadImage("Images/NotShooting.png");
 zombieImg1=loadImage("Images/zombieLeft.png");
 zombieImg2= loadImage("Images/zombieRight.png")
+backgroundImg= loadImage("Images/Background.jpg");
 
 }
 
@@ -16,12 +17,16 @@ player.scale=2;
 player.debug=true;
 player.setCollider("rectangle",0,0,100,100)
 zombieGroup= new Group(); 
+bulletGroup= new Group();
+
 health=100;
 gameState=1;
+wave= 0; 
 }
 
 function draw(){
 background("white");
+image(backgroundImg, displayWidth/2, displayHeight/2, displayWidth,displayHeight);
 if (gameState===1){
     if (keyWentDown("Left")){
     player.velocityX= -4;
@@ -36,6 +41,10 @@ if (gameState===1){
         player.velocityX=0;
     }
     spawnZombies();
+    spawnBullet();
+    if (bulletGroup.isTouching(zombieGroup)){
+        zombieGroup.destroyEach();
+    }
     if (zombieGroup.isTouching(player)){
         health=health-10;
     }
@@ -73,6 +82,15 @@ function spawnZombies (){
             zombie.scale=1.5
         }
         zombieGroup.add(zombie);
+    }
+}
+
+function spawnBullet(){
+    if (keyCode===32){
+        var bullet= createSprite(player.x,player.y,20,20);
+        bullet.velocityY= -5;
+        bulletGroup.add(bullet);
+        keyCode=0;
     }
 }
 
